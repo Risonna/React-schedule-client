@@ -1,13 +1,219 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* styles for the header */
+header {
+  background-color: #333;
+  padding: 20px;
+  color: #fff;
+  text-align: center;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+nav ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+nav li {
+  font-size: 24px;
+}
+
+nav a {
+  text-decoration: none;
+  color: #fff;
+  padding: 10px 20px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+nav a:hover {
+  background-color: #555;
+  border-color: #fff;
+}
+
+/* Add any additional styling you want for the header */
+
+
+/* styles for the login and register containers */
+.login-container,
+.register-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.login-container h2,
+.register-container h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+/* Add any additional styling you want for the login and register pages */
+
+
+/* styles for the home container */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+  background-color: #f9f9f9;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.home-container h2 {
+  font-size: 36px;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+
+.home-container .buttons-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.home-container a {
+  text-decoration: none;
+  padding: 12px 24px;
+  color: #fff;
+  font-size: 18px;
+  background-color: #333; /* Google blue */
+  border: 2px solid #555;
+  border-radius: 8px;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.home-container a:hover {
+  background-color: darkslateblue; /* Slightly darker on hover */
+  transform: scale(1.05);
+  text-decoration: none;
+}
+
+/* Add any additional styling you want for the home page */
+
+/* Style for the teacher-schedule-container */
+.schedule-container {
+  display: grid;
+    align-content: center;
+    place-items: center;
+  margin: 20px;
+}
+
+/* Style for the selection menu */
+.selection-menu-wrapper {
+  margin-bottom: 10px;
+}
+
+/* Style for the table */
+.lesson-table {
+  width: 40%;
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+}
+
+/* Style for the table header (th) */
+.lesson-table th {
+  padding: 10px;
+  text-align: center;
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #ccc;
+}
+
+/* Style for the table data (td) */
+.lesson-table td {
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ccc;
+}
+
+/* Style for the table data in odd rows */
+.lesson-table tbody tr:nth-child(odd) td {
+  background-color: #f9f9f9;
+}
+
+/* Style for the table data in even rows */
+.lesson-table tbody tr:nth-child(even) td {
+  background-color: #ebebeb;
+}
+
+/* Style for the selected teacher's lessons */
+.lesson-table .selected-teacher {
+  background-color: #ffc107;
+  color: #333;
+  font-weight: bold;
+}
+
+/* Hover effect for table rows */
+.lesson-table tbody tr:hover td {
+  background-color: #c8e6c9;
+  cursor: pointer;
+}
+/* Style for the table cell */
+.lesson-cell {
+  padding: 5px;
+  margin: 15px;
+  border: 1px solid #ccc;
+}
+/* Style for the selection menu wrapper */
+.selection-menu-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* Style for the select menus */
+select {
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s ease-in-out;
+}
+
+select:hover {
+  border-color: #999;
+}
+
+select:focus {
+  border-color: #007bff;
+}
+
+/* Style for the select menu options */
+option {
+  padding: 8px;
+  font-size: 16px;
+}
+/* Add styles for the "All Teachers" view */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 20px;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
 }
