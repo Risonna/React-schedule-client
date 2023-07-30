@@ -2,6 +2,17 @@ import React from 'react';
 const daysOfWeek = ['ПОНЕДЕЛЬНИК', 'ВТОРНИК', 'СРЕДА', 'ЧЕТВЕРГ', 'ПЯТНИЦА', 'СУББОТА', 'ВОСКРЕСЕНЬЕ', 'ВСЯ НЕДЕЛЯ'];
 
 const LessonTable = ({ selectedDayOfWeek, TIME_PERIODS, lessons, subjects }) => {
+
+  const checkScheduleContainer = () => {
+    const gridDiv = document.querySelector('.not-schedule-container');
+    if(gridDiv){
+      if(!gridDiv.classList.contains('schedule-container')) {
+        gridDiv.classList.add('schedule-container');
+        gridDiv.classList.remove('not-schedule-container')
+      }
+    }
+  } 
+
   // Create a new array to store unique lessons
   const uniqueLessons = [];
 
@@ -24,6 +35,7 @@ const LessonTable = ({ selectedDayOfWeek, TIME_PERIODS, lessons, subjects }) => 
       <thead>
         <tr>
           <th>Время</th>
+          {checkScheduleContainer()}
           {selectedDayOfWeek !== 'ВСЯ НЕДЕЛЯ' ? (
             <th>{selectedDayOfWeek}</th>
           ) : (

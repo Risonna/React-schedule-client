@@ -39,6 +39,8 @@ const DepartmentSchedule = () => {
         const { data: allLessons, loading: allLessonsLoading, error: allLessonsError } = useDataFetching(
             `http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/get-all-info/get-all-lessons?teacherId=`
         );
+        
+
 
     const handleDepartmentChange = (event) => {
         const selectedDepartment = event.target.value;
@@ -94,7 +96,7 @@ const DepartmentSchedule = () => {
 
     return (
         <div className="schedule-container">
-            <h2>Department Schedule</h2>
+            <h2 style={{textAlignLast: 'center'}}>Department Schedule</h2>
             <div className="selection-menu-wrapper">
                 <DepartmentSelect departments={departments} selectedDepartment={selectedDepartment} handleDepartmentChange={handleDepartmentChange} />
                 <TeacherSelect
@@ -116,6 +118,7 @@ const DepartmentSchedule = () => {
                     </label>
                 </div>
             </div>
+
             {(selectedTeacher && (viewType =="singleTeacher")) ? (
                 <LessonTable selectedDayOfWeek={selectedDayOfWeek} TIME_PERIODS={TIME_PERIODS} lessons={lessons} subjects={subjects} />
             ) : (

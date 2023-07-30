@@ -209,6 +209,12 @@ th, td {
   padding: 8px;
   text-align: left;
 }
+div.lessontd {
+  min-width: 150px;
+  max-width: 150px;
+  max-height: 70px;
+  min-height: 70px;
+}
 
 th {
   background-color: #f2f2f2;
@@ -217,3 +223,5 @@ th {
 tr:nth-child(even) {
   background-color: #f2f2f2;
 }
+
+
