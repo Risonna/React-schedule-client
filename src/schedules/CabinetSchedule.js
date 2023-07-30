@@ -26,6 +26,11 @@ const CabinetSchedule = () => {
     `http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/get-all-info/get-all-lessons?cabinetId=${selectedCabinet}`
   );
 
+     // Fetch teachers using the custom hook
+     const { data: teachers, loading: teachersLoading, error: teachersError } = useDataFetching(
+      'http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/get-all-info/get-all-teachers'
+  );
+
   const handleCabinetChange = (event) => {
     setSelectedCabinet(event.target.value);
   };
@@ -54,7 +59,7 @@ const CabinetSchedule = () => {
         <CabinetSelect cabinets={cabinets} selectedCabinet={selectedCabinet} handleCabinetChange={handleCabinetChange} />
         <DayOfWeekSelect daysOfWeek={daysOfWeek} selectedDayOfWeek={selectedDayOfWeek} handleDayOfWeekChange={handleDayOfWeekChange} />
       </div>
-      <LessonTable selectedDayOfWeek={selectedDayOfWeek} TIME_PERIODS={TIME_PERIODS} lessons={lessons} subjects={subjects} />
+      <LessonTable selectedDayOfWeek={selectedDayOfWeek} TIME_PERIODS={TIME_PERIODS} lessons={lessons} subjects={subjects} teachers={teachers} cabinets={cabinets} />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 const daysOfWeek = ['ПОНЕДЕЛЬНИК', 'ВТОРНИК', 'СРЕДА', 'ЧЕТВЕРГ', 'ПЯТНИЦА', 'СУББОТА', 'ВОСКРЕСЕНЬЕ', 'ВСЯ НЕДЕЛЯ'];
 
-const LessonTable = ({ selectedDayOfWeek, TIME_PERIODS, lessons, subjects }) => {
+const LessonTable = ({ selectedDayOfWeek, TIME_PERIODS, lessons, subjects, teachers, cabinets }) => {
 
   const checkScheduleContainer = () => {
     const gridDiv = document.querySelector('.not-schedule-container');
@@ -12,6 +12,44 @@ const LessonTable = ({ selectedDayOfWeek, TIME_PERIODS, lessons, subjects }) => 
       }
     }
   } 
+
+  const matchLessonsWithParameters = (timePeriod, day) => {
+    {return uniqueLessons.map((lesson) => {
+      if (
+        lesson.lessonDay === day.toLowerCase() &&
+        lesson.lessonTime === timePeriod
+      ) {
+        let subjectName = 'unknown';
+        subjects.forEach((subject) => {
+          if (subject.id === lesson.subjectId) {
+            subjectName = subject.subjectName;
+          }
+        });
+        let cabinetName = 'unknown';
+        cabinets.forEach((cabinet) => {
+          if(cabinet.id === lesson.cabinetId){
+            cabinetName = cabinet.cabinetName;
+          }
+        });
+        let teacherName = 'unknown';
+        teachers.forEach((teacher) => {
+          if(teacher.id === lesson.teacherId){
+            teacherName = teacher.teacherSurname + ' ' + teacher.teacherName.charAt(0) + '.' + teacher.teacherPatronymic.charAt(0) + '.';
+          }
+        });
+        return (
+          <div key={lesson.id} className="lesson-cell">
+            {lesson.fromWeekToWeek} {lesson.lessonWeek} {lesson.byChoice} {subjectName} {lesson.lessonType} {teacherName} ауд. {cabinetName}
+          </div>
+        );
+      } else {
+        // If the lesson doesn't match the condition, you can return an empty div or null
+        return <div key={lesson.id}></div>;
+      }
+    })}
+  };
+
+
 
   // Create a new array to store unique lessons
   const uniqueLessons = [];
@@ -56,28 +94,7 @@ const LessonTable = ({ selectedDayOfWeek, TIME_PERIODS, lessons, subjects }) => 
             {selectedDayOfWeek !== 'ВСЯ НЕДЕЛЯ' ? (
               <td>
                 <div style={{ textAlign: 'center' }}>
-                  {/* Add your data here */}
-                  {uniqueLessons.map((lesson) => {
-                    if (
-                      lesson.lessonDay === selectedDayOfWeek.toLowerCase() &&
-                      lesson.lessonTime === timePeriod
-                    ) {
-                      let subjectName = 'unknown';
-                      subjects.forEach((subject) => {
-                        if (subject.id === lesson.subjectId) {
-                          subjectName = subject.subjectName;
-                        }
-                      });
-                      return (
-                        <div key={lesson.id} className="lesson-cell">
-                          {lesson.fromWeekToWeek} {lesson.byChoice} {subjectName} {lesson.lessonType} {lesson.lessonWeek}
-                        </div>
-                      );
-                    } else {
-                      // If the lesson doesn't match the condition, you can return an empty div or null
-                      return <div key={lesson.id}></div>;
-                    }
-                  })}
+                  {matchLessonsWithParameters(timePeriod, selectedDayOfWeek)}
                 </div>
               </td>
             ) : (
@@ -88,27 +105,7 @@ const LessonTable = ({ selectedDayOfWeek, TIME_PERIODS, lessons, subjects }) => 
                     <td key={day}>
                       <div style={{ textAlign: 'center' }}>
                         {/* Add your data here */}
-                        {uniqueLessons.map((lesson) => {
-                          if (
-                            lesson.lessonDay === day.toLowerCase() &&
-                            lesson.lessonTime === timePeriod
-                          ) {
-                            let subjectName = 'unknown';
-                            subjects.forEach((subject) => {
-                              if (subject.id === lesson.subjectId) {
-                                subjectName = subject.subjectName;
-                              }
-                            });
-                            return (
-                              <div key={lesson.id} className="lesson-cell">
-                                {lesson.fromWeekToWeek} {lesson.byChoice} {subjectName} {lesson.lessonType} {lesson.lessonWeek}
-                              </div>
-                            );
-                          } else {
-                            // If the lesson doesn't match the condition, you can return an empty div or null
-                            return <div key={lesson.id}></div>;
-                          }
-                        })}
+                        {matchLessonsWithParameters(timePeriod, day)}
                       </div>
                     </td>
                   );

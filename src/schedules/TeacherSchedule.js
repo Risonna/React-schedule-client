@@ -27,6 +27,10 @@ const TeacherSchedule = () => {
     const { data: lessons, loading: lessonsLoading, error: lessonsError } = useDataFetching(
         `http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/get-all-info/get-all-lessons?teacherId=${selectedTeacher}`
     );
+    // Fetch departments using the custom hook
+    const { data: cabinets, loading: cabinetsLoading, error: cabinetsError } = useDataFetching(
+        'http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/get-all-info/get-all-cabinets'
+    );
 
     const handleTeacherChange = (event) => {
         setSelectedTeacher(event.target.value);
@@ -39,14 +43,14 @@ const TeacherSchedule = () => {
 
 
     // ... other functions and logic ...
- useEffect(() => {
-    // Set the selectedTeacher to the first teacher in the list after fetching teachers
-    if (teachers.length > 0 && !selectedTeacher) {
-      setSelectedTeacher(teachers[0].id);
-    }
-  }, [teachers, selectedTeacher]);
-  
-  
+    useEffect(() => {
+        // Set the selectedTeacher to the first teacher in the list after fetching teachers
+        if (teachers.length > 0 && !selectedTeacher) {
+            setSelectedTeacher(teachers[0].id);
+        }
+    }, [teachers, selectedTeacher]);
+
+
 
     // Wait for all the data to be loaded before rendering the LessonTable
     if (teachersLoading || subjectsLoading || lessonsLoading) {
@@ -61,7 +65,7 @@ const TeacherSchedule = () => {
                 <DayOfWeekSelect daysOfWeek={daysOfWeek} selectedDayOfWeek={selectedDayOfWeek} handleDayOfWeekChange={handleDayOfWeekChange} />
             </div>
 
-            <LessonTable selectedDayOfWeek={selectedDayOfWeek} TIME_PERIODS={TIME_PERIODS} lessons={lessons} subjects={subjects} />
+            <LessonTable selectedDayOfWeek={selectedDayOfWeek} TIME_PERIODS={TIME_PERIODS} lessons={lessons} subjects={subjects} teachers={teachers} cabinets={cabinets}/>
         </div>
     );
 };

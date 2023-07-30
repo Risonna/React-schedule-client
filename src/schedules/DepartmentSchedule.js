@@ -35,11 +35,15 @@ const DepartmentSchedule = () => {
         `http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/get-all-info/get-all-lessons?teacherId=${selectedTeacher}`
     );
 
-        // Fetch lessons using the custom hook
-        const { data: allLessons, loading: allLessonsLoading, error: allLessonsError } = useDataFetching(
-            `http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/get-all-info/get-all-lessons?teacherId=`
+    // Fetch lessons using the custom hook
+    const { data: allLessons, loading: allLessonsLoading, error: allLessonsError } = useDataFetching(
+        `http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/get-all-info/get-all-lessons`
+    );
+        // Fetch departments using the custom hook
+        const { data: cabinets, loading: cabinetsLoading, error: cabinetsError } = useDataFetching(
+            'http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/get-all-info/get-all-cabinets'
         );
-        
+
 
 
     const handleDepartmentChange = (event) => {
@@ -64,7 +68,7 @@ const DepartmentSchedule = () => {
 
     useEffect(() => {
         // Fetch teachers whenever selectedDepartment changes
-        if(teachers.length >0){
+        if (teachers.length > 0) {
             setSelectedTeacher(null); // Reset selected teacher when department changes
         }
     }, [selectedDepartment]);
@@ -83,11 +87,11 @@ const DepartmentSchedule = () => {
 
     useEffect(() => {
         // Fetch teachers whenever selectedDepartment changes
-        if(teachers.length >0){
+        if (teachers.length > 0) {
             setSelectedTeacher(teachers[0].id); // Reset selected teacher when department changes
         }
     }, [teachers]);
-    
+
 
     // Wait for all the data to be loaded before rendering the LessonTable
     if (departmentsLoading || teachersLoading) {
@@ -96,7 +100,7 @@ const DepartmentSchedule = () => {
 
     return (
         <div className="schedule-container">
-            <h2 style={{textAlignLast: 'center'}}>Department Schedule</h2>
+            <h2 style={{ textAlignLast: 'center' }}>Department Schedule</h2>
             <div className="selection-menu-wrapper">
                 <DepartmentSelect departments={departments} selectedDepartment={selectedDepartment} handleDepartmentChange={handleDepartmentChange} />
                 <TeacherSelect
@@ -119,8 +123,8 @@ const DepartmentSchedule = () => {
                 </div>
             </div>
 
-            {(selectedTeacher && (viewType =="singleTeacher")) ? (
-                <LessonTable selectedDayOfWeek={selectedDayOfWeek} TIME_PERIODS={TIME_PERIODS} lessons={lessons} subjects={subjects} />
+            {(selectedTeacher && (viewType == "singleTeacher")) ? (
+                <LessonTable selectedDayOfWeek={selectedDayOfWeek} TIME_PERIODS={TIME_PERIODS} lessons={lessons} subjects={subjects} teachers={teachers} cabinets={cabinets} />
             ) : (
                 <DepartmentLessonTable
                     selectedDayOfWeek={selectedDayOfWeek}
@@ -130,6 +134,7 @@ const DepartmentSchedule = () => {
                     viewType={viewType}
                     selectedTeacher={selectedTeacher}
                     teachers={teachers}
+                    cabinets={cabinets}
                 />
             )}
         </div>

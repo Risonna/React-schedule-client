@@ -212,8 +212,11 @@ th, td {
 div.lessontd {
   min-width: 150px;
   max-width: 150px;
-  max-height: 70px;
-  min-height: 70px;
+  max-height: 100px;
+  min-height: 100px;
+  text-align-last: center;
+  font-size: 80%;
+
 }
 
 th {
@@ -222,6 +225,71 @@ th {
 
 tr:nth-child(even) {
   background-color: #f2f2f2;
+}
+
+/* Add styles for the "All Teachers" view */
+.allDaysTeachers {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.allDaysTeachers th {
+  padding: 10px;
+  text-align: center;
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #ccc;
+}
+
+.allDaysTeachers td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ccc;
+}
+
+.allDaysTeachers tbody tr:nth-child(odd) td {
+  background-color: #f9f9f9;
+}
+
+.allDaysTeachers tbody tr:nth-child(even) td {
+  background-color: #ebebeb;
+}
+
+.allDaysTeachers .selected-teacher {
+  background-color: #ffc107;
+  color: #333;
+  font-weight: bold;
+}
+
+/* Hover effect for table rows */
+.allDaysTeachers tbody tr:hover td {
+  background-color: #c8e6c9;
+  cursor: pointer;
+}
+
+/* Style for teacher names cell */
+.allDaysTeachers .teacher-name {
+  min-width: 200px;
+  max-width: 200px;
+  max-height: 70px;
+  min-height: 70px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Center align text in table cells */
+.allDaysTeachers th, .allDaysTeachers td {
+  text-align: center;
+}
+
+/* Styles for the individual day tables */
+.allDaysTeachers table {
+  margin-bottom: 30px;
 }
 
 
