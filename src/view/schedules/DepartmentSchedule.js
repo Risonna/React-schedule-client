@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import useDataFetching from '../hooks/useDataFetching';
+import useDataFetching from '../../domain/hooks/useDataFetching';
 import DepartmentSelect from '../selectionMenus/DepartmentSelect';
 import TeacherSelect from '../selectionMenus/TeacherSelect';
 import DayOfWeekSelect from '../selectionMenus/dayOfWeekSelect';

@@ -12,6 +12,7 @@ const Home = () => {
         <Link to="/teacherschedule">Teacher Schedule</Link>
         <Link to="/cabinetschedule">Cabinet Schedule</Link>
         <Link to="/departmentschedule">Department Schedule</Link>
+        <Link to="/dashboard">Dashboard</Link>
         {/* Add more buttons or interactive elements here */}
       </div>
     </div>

@@ -1,0 +1,47 @@
+/* Dashboard.css */
+.dashboard-container {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(250px, 1fr)); /* Updated property here */
+    gap: 20px;
+    margin-top: 30px;
+  }
+  
+  .dashboard-card {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f2f2f2;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+  
+  .dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dashboard-link {
+    text-decoration: none;
+    color: #333;
+  }
+  
+  .dashboard-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+  }
+  
+  .dashboard-card h3 {
+    font-size: 20px;
+    margin-bottom: 5px;
+  }
+  
+  .dashboard-card p {
+    font-size: 16px;
+  }
+  
+  /* Optional: Add any additional styles you want */
+  
