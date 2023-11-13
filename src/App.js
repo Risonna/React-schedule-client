@@ -11,12 +11,16 @@ import CheckRegister from './WIP/Check';
 import CheckLogin from './WIP/CheckLogin';
 import { useState, useEffect } from 'react';
 import jwtDecode from 'jwt-decode';
-import Dashboard from './pages/Dashboard';
+import Dashboard from './view/pages/Dashboard';
 import PdfGenerator from './WIP/PdfGenerator';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLoginStatus, setUserRole } from './state/actionCreators/authActionCreators';
 
 const App = () => {
-  const [loggedIn, setLoggedIn] = useState(null);
-  const [userRole, setUserRole] = useState('guest');
+
+  const dispatch = useDispatch();
+  const loggedIn = useSelector((state) => state.auth.loggedIn);
+  const userRole = useSelector((state) => state.auth.userRole);
 
   useEffect(() => {
     // Check if a token is present in local storage on page load
@@ -24,26 +28,26 @@ const App = () => {
     if (token) {
       const decodedToken = jwtDecode(token);
       const role = decodedToken.role;
-      setUserRole(role);
-      console.log(role);
-      setLoggedIn(true);
+      dispatch(setUserRole((role)));
+      dispatch(setLoginStatus(true));
     }
     else{
-      setLoggedIn(false);
-      setUserRole('guest');
+      dispatch(setLoginStatus(false));
+      dispatch(setUserRole(('guest')));
     }
   }, []);
 
   const handleLoginSuccess = (role) => {
-    setLoggedIn(true);
-    setUserRole(role);
+    dispatch(setLoginStatus(true));
+    dispatch(setUserRole((role)));
   };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    setUserRole('guest');
-    setLoggedIn(false);
+    dispatch(setUserRole(('guest')));
+    dispatch(setLoginStatus(false));
   };
+
    // Show loading state if logged-in state is still null
    if (loggedIn === null) {
     return <div>Loading...</div>;
@@ -52,7 +56,7 @@ const App = () => {
   return (
     <Router>
       <div> 
-      <Header loggedIn={loggedIn} onLogout={handleLogout} />
+      <Header onLogout={handleLogout} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />

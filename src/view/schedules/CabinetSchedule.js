@@ -3,52 +3,57 @@ import useDataFetching from '../../domain/hooks/useDataFetching';
 import CabinetSelect from '../selectionMenus/CabinetSelect';
 import DayOfWeekSelect from '../selectionMenus/dayOfWeekSelect';
 import LessonTable from '../tables/LessonTable';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchTeachers } from '../../state/actionCreators/teacherActionCreators';
+import { fetchSubjects } from '../../state/actionCreators/subjectActionCreators';
+import { fetchCabinets } from '../../state/actionCreators/cabinetActionCreators';
+import { fetchLessons } from '../../state/actionCreators/lessonActionCreators';
+import { setSelectedDayOfWeek } from '../../state/actionCreators/selectedDayOfWeekActionCreators';
 
 const CabinetSchedule = () => {
-  const [selectedCabinet, setSelectedCabinet] = useState(null);
+  const [selectedCabinet, setSelectedCabinet] = useState(1);
 
   const daysOfWeek = ['ПОНЕДЕЛЬНИК', 'ВТОРНИК', 'СРЕДА', 'ЧЕТВЕРГ', 'ПЯТНИЦА', 'СУББОТА', 'ВОСКРЕСЕНЬЕ', 'ВСЯ НЕДЕЛЯ'];
-  const [selectedDayOfWeek, setSelectedDayOfWeek] = useState(daysOfWeek[0]);
   const TIME_PERIODS = ['8.00-9.35', '9.45-11.20', '11.45-13.20', '13.30-15.05', '15.30-17.05', '17.15-18.50', '19.00-20.35'];
 
-  // Fetch cabinets using the custom hook
-  const { data: cabinets, loading: cabinetsLoading, error: cabinetsError } = useDataFetching(
-    'http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/get-all-info/get-all-cabinets'
-  );
+  const dispatch = useDispatch();
 
-  // Fetch subjects using the custom hook
-  const { data: subjects, loading: subjectsLoading, error: subjectsError } = useDataFetching(
-    'http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/get-all-info/get-all-subjects'
-  );
+  const selectedDayOfWeek = useSelector((state) => state.selectedDay);
 
-  // Fetch lessons using the custom hook
-  const { data: lessons, loading: lessonsLoading, error: lessonsError } = useDataFetching(
-    `http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/get-all-info/get-all-lessons?cabinetId=${selectedCabinet}`
-  );
+  const cabinets = useSelector((state) => state.cabinets.data);
+  const cabinetsLoading = useSelector((state) => state.cabinets.loading);
 
-     // Fetch teachers using the custom hook
-     const { data: teachers, loading: teachersLoading, error: teachersError } = useDataFetching(
-      'http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/get-all-info/get-all-teachers'
-  );
+  const subjects = useSelector((state) => state.subjects.data);
+  const subjectsLoading = useSelector((state) => state.subjects.loading);
+
+  const lessons = useSelector((state) => state.lessons.data);
+  const lessonsLoading = useSelector((state) => state.lessons.loading);
+
+  const teachers = useSelector((state) => state.teachers.data);
+  const teachersLoading = useSelector((state) => state.teachers.loading);
 
   const handleCabinetChange = (event) => {
     setSelectedCabinet(event.target.value);
   };
 
-  // Define handleDayOfWeekChange function (not shown in your provided code)
   const handleDayOfWeekChange = (event) => {
-    setSelectedDayOfWeek(event.target.value);
+    dispatch(setSelectedDayOfWeek(event.target.value));
   };
 
   useEffect(() => {
-    // Set the selectedCabinet to the first cabinet in the list after fetching cabinets
-    if (cabinets.length > 0 && !selectedCabinet) {
-      setSelectedCabinet(cabinets[0].id);
-    }
-  }, [cabinets, selectedCabinet]);
+    dispatch(fetchTeachers('none'));
+    dispatch(fetchSubjects());
+    dispatch(fetchCabinets());
+    dispatch(fetchLessons('cabinet', selectedCabinet));
+
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchLessons('cabinet', selectedCabinet));
+  }, [selectedCabinet])
 
   // Wait for all the data to be loaded before rendering the LessonTable
-  if (cabinetsLoading || subjectsLoading || lessonsLoading) {
+  if (cabinetsLoading || subjectsLoading || lessonsLoading || teachersLoading) {
     return <div>Loading...</div>;
   }
 

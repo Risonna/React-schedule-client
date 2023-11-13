@@ -7,13 +7,15 @@ function PdfGenerator() {
     const [webSocket, setWebSocket] = useState(null);
 
 
+
     useEffect(() => {
         const webSocketUrl = 'ws://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/websocket/pdf';
         const ws = new WebSocket(webSocketUrl);
 
         ws.onmessage = (event) => {
             console.log('Message from server:', event.data);
-            if (event.data === 'pdf_ready:' + taskId) {
+            console.log(taskId);
+            if (event.data === taskId) {
                 downloadPdf(taskId); // Call function to download PDF
             }
         };

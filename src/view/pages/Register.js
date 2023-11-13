@@ -2,7 +2,8 @@ import React from 'react';
 
 import { useState } from 'react';
 
-import './register.css';
+import './styles/register.css';
+import registerService from '../../businessLogic/registerService';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -24,36 +25,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    if (password !== passwordConfirm) {
-      setError('Passwords do not match');
-      return;
-    }
-  
-    try {
-      const response = await fetch(
-        'http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/auth/register',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: username,
-            password: password,
-            passwordConfirm: passwordConfirm,
-            email: email,
-          }),
-        }
-      );
-  
-      if (response.ok) {
-        setIsRegistered(true);
-      } else {
-        setError('Failed to register user');
-      }
-    } catch (error) {
-      setError('Failed to register user');
-    }
+    registerService.register(username, password, passwordConfirm, email, setIsRegistered, setError);
   };
   
 

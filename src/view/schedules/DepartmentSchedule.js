@@ -1,48 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import useDataFetching from '../../domain/hooks/useDataFetching';
 import DepartmentSelect from '../selectionMenus/DepartmentSelect';
 import TeacherSelect from '../selectionMenus/TeacherSelect';
 import DayOfWeekSelect from '../selectionMenus/dayOfWeekSelect';
 import LessonTable from '../tables/LessonTable';
 import DepartmentLessonTable from '../tables/DepartmentLessonTable';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchTeachers } from '../../state/actionCreators/teacherActionCreators';
+import { fetchSubjects } from '../../state/actionCreators/subjectActionCreators';
+import { fetchCabinets } from '../../state/actionCreators/cabinetActionCreators';
+import { fetchLessons } from '../../state/actionCreators/lessonActionCreators';
+import { fetchDepartments } from '../../state/actionCreators/departmentActionCreators';
+import { setSelectedDayOfWeek } from '../../state/actionCreators/selectedDayOfWeekActionCreators';
 
 const DepartmentSchedule = () => {
-    const [selectedDepartment, setSelectedDepartment] = useState(null);
-    const [selectedTeacher, setSelectedTeacher] = useState(null);
-    const [selectedDayOfWeek, setSelectedDayOfWeek] = useState('ПОНЕДЕЛЬНИК');
+    const [selectedDepartment, setSelectedDepartment] = useState('unknown');
+    const [selectedTeacher, setSelectedTeacher] = useState(1);
     const [viewType, setViewType] = useState('singleTeacher');
 
     const daysOfWeek = ['ПОНЕДЕЛЬНИК', 'ВТОРНИК', 'СРЕДА', 'ЧЕТВЕРГ', 'ПЯТНИЦА', 'СУББОТА', 'ВОСКРЕСЕНЬЕ', 'ВСЯ НЕДЕЛЯ'];
     const TIME_PERIODS = ['8.00-9.35', '9.45-11.20', '11.45-13.20', '13.30-15.05', '15.30-17.05', '17.15-18.50', '19.00-20.35'];
 
-    // Fetch departments using the custom hook
-    const { data: departments, loading: departmentsLoading, error: departmentsError } = useDataFetching(
-        'http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/get-all-info/get-all-departments'
-    );
+    const dispatch = useDispatch();
 
-    // Fetch teachers using the custom hook with the selected department as a parameter
-    const { data: teachers, loading: teachersLoading, error: teachersError } = useDataFetching(
-        `http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/get-all-info/get-all-teachers?department=${selectedDepartment}`
-    );
+    const selectedDayOfWeek = useSelector((state) => state.selectedDay);
 
-    // Fetch subjects using the custom hook
-    const { data: subjects, loading: subjectsLoading, error: subjectsError } = useDataFetching(
-        'http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/get-all-info/get-all-subjects'
-    );
+    const departments = useSelector((state) => state.departments.data);
+    const departmentsLoading = useSelector((state) => state.departments.loading);
 
-    // Fetch lessons using the custom hook
-    const { data: lessons, loading: lessonsLoading, error: lessonsError } = useDataFetching(
-        `http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/get-all-info/get-all-lessons?teacherId=${selectedTeacher}`
-    );
+    const teachers = useSelector((state) => state.teachers.data);
+    const teachersLoading = useSelector((state) => state.teachers.loading);
 
-    // Fetch lessons using the custom hook
-    const { data: allLessons, loading: allLessonsLoading, error: allLessonsError } = useDataFetching(
-        `http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/get-all-info/get-all-lessons`
-    );
-        // Fetch departments using the custom hook
-        const { data: cabinets, loading: cabinetsLoading, error: cabinetsError } = useDataFetching(
-            'http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/get-all-info/get-all-cabinets'
-        );
+    const subjects = useSelector((state) => state.subjects.data);
+    const subjectsLoading = useSelector((state) => state.subjects.loading);
+
+    const lessons = useSelector((state) => state.lessons.data);
+    const lessonsLoading = useSelector((state) => state.lessons.loading);
+
+    const cabinets = useSelector((state) => state.cabinets.data);
+    const cabinetsLoading = useSelector((state) => state.cabinets.loading);
 
 
 
@@ -60,30 +55,22 @@ const DepartmentSchedule = () => {
     };
 
     const handleDayOfWeekChange = (event) => {
-        setSelectedDayOfWeek(event.target.value);
+        dispatch(setSelectedDayOfWeek(event.target.value));
     };
     const handleViewTypeChange = (event) => {
         setViewType(event.target.value);
     };
 
     useEffect(() => {
-        // Fetch teachers whenever selectedDepartment changes
+        dispatch(fetchLessons('teacher', selectedTeacher));
+    }, [selectedTeacher])
+
+    useEffect(() => {
+        dispatch(fetchTeachers('department', selectedDepartment));
         if (teachers.length > 0) {
-            setSelectedTeacher(null); // Reset selected teacher when department changes
+            setSelectedTeacher(teachers[0]); // Reset selected teacher when department changes
         }
     }, [selectedDepartment]);
-
-    useEffect(() => {
-        // Set the selectedDepartment to the first department in the list after fetching departments
-        if (departments.length > 0 && !selectedDepartment) {
-            setSelectedDepartment(departments[0]);
-        }
-    }, [departments, selectedDepartment]);
-
-
-    useEffect(() => {
-        setSelectedDepartment(departments[0]);
-    }, [departments])
 
     useEffect(() => {
         // Fetch teachers whenever selectedDepartment changes
@@ -92,9 +79,27 @@ const DepartmentSchedule = () => {
         }
     }, [teachers]);
 
+    useEffect(() => {
+    if(viewType == 'singleTeacher'){
+        dispatch(fetchLessons('teacher', selectedTeacher));
+    }
+    else{
+        dispatch(fetchLessons('none', null));
+    }
+
+    }, [viewType])
+
+    useEffect(() => {
+        dispatch(fetchSubjects());
+        dispatch(fetchTeachers('department', selectedDepartment));
+        dispatch(fetchCabinets());
+        dispatch(fetchLessons('teacher', selectedTeacher));
+        dispatch(fetchDepartments());
+    }, [dispatch])
+
 
     // Wait for all the data to be loaded before rendering the LessonTable
-    if (departmentsLoading || teachersLoading) {
+    if (departmentsLoading || teachersLoading || subjectsLoading || lessonsLoading || cabinetsLoading) {
         return <div>Loading...</div>;
     }
 
@@ -129,7 +134,7 @@ const DepartmentSchedule = () => {
                 <DepartmentLessonTable
                     selectedDayOfWeek={selectedDayOfWeek}
                     TIME_PERIODS={TIME_PERIODS}
-                    lessons={allLessons}
+                    lessons={lessons}
                     subjects={subjects}
                     viewType={viewType}
                     selectedTeacher={selectedTeacher}

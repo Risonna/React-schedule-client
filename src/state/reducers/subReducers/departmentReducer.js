@@ -5,18 +5,18 @@ const initialState = {
     error: null,
   };
   
-  const cabinetReducer = (state = initialState, action) => {
+  const departmentReducer = (state = initialState, action) => {
     switch (action.type) {
-      case 'FETCH_CABINETS_REQUEST':
+      case 'FETCH_DEPARTMENTS_REQUEST':
         return { ...state, loading: true };
-      case 'FETCH_CABINETS_SUCCESS':
+      case 'FETCH_DEPARTMENTS_SUCCESS':
         return { ...state, data: action.payload, loading: false };
-      case 'FETCH_CABINETS_FAILURE':
+      case 'FETCH_DEPARTMENTS_FAILURE':
         return { ...state, error: action.error, loading: false };
       default:
         return state;
     }
   };
   
-  export default cabinetReducer;
+  export default departmentReducer;
   

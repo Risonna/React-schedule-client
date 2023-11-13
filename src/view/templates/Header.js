@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
-const Header = ({ loggedIn, onLogout }) => {
+const Header = ({onLogout }) => {
   const navigate = useNavigate();
+  const loggedIn = useSelector((state) => state.auth.loggedIn);
+  const userRole = useSelector((state) => state.auth.userRole);
 
   const logOut = () => {
     onLogout(); // Call the function to update the loggedIn state in the App component

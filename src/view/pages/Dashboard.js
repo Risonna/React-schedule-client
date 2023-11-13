@@ -1,12 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiBook, FiCalendar, FiUsers, FiFileText } from 'react-icons/fi'; // Import icons from react-icons
-import './Dashboard.css';
+import './styles/Dashboard.css';
 
 const Dashboard = () => {
   return (
     <div className="dashboard-container">
-      <h2>Welcome to the Dashboard</h2>
       <div className="dashboard-cards">
         {/* Card 1 */}
         <div className="dashboard-card">

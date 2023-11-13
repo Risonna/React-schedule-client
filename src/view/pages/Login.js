@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
+import authService from '../../businessLogic/authService';
 
 const Login = ({ onLoginSuccess }) => {
   const navigate = useNavigate();
@@ -19,45 +20,13 @@ const Login = ({ onLoginSuccess }) => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
-    try {
-      const response = await fetch(
-        'http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/auth/login',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            username: username,
-            password: password,
-          }),
-        }
-      );
-
-      if (response.ok) {
-        const jsonResponse = await response.json();
-        const token = jsonResponse.token;
-
-        // Save the token to local storage
-        localStorage.setItem('token', token);
-        const decodedToken = jwtDecode(token);
-        const role = decodedToken.role;
-        setError(null);
-        onLoginSuccess(role); // Call the function passed from the Header component
-
-        // Clear the form data
-        setFormData({ username: '', password: '' });
-        navigate('/');
-      } else if (response.status === 400) {
-        setError('Invalid username.');
-      } else if (response.status === 401) {
-        setError('Authentication failed. Invalid username or password.');
-      } else {
-        setError('Login failed.');
-      }
-    } catch (error) {
-      setError('Error during login:', error);
+  
+    const { success } = await authService.login(username, password, onLoginSuccess, setError);
+  
+    if (success) {
+      // Clear the form data
+      setFormData({ username: '', password: '' });
+      navigate('/');
     }
   };
 

@@ -48,49 +48,6 @@ nav a:hover {
 }
 
 
-/* styles for the home container */
-.home-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 50px;
-  background-color: #f9f9f9;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.home-container h2 {
-  font-size: 36px;
-  margin-bottom: 30px;
-  color: #333;
-}
-
-
-.home-container .buttons-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-}
-
-.home-container a {
-  text-decoration: none;
-  padding: 12px 24px;
-  color: #fff;
-  font-size: 18px;
-  background-color: #333; /* Google blue */
-  border: 2px solid #555;
-  border-radius: 8px;
-  transition: background-color 0.2s, transform 0.2s;
-}
-
-.home-container a:hover {
-  background-color: darkslateblue; /* Slightly darker on hover */
-  transform: scale(1.05);
-  text-decoration: none;
-}
-
 /* Style for the teacher-schedule-container */
 .schedule-container {
   display: grid;
