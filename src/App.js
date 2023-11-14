@@ -15,6 +15,7 @@ import Dashboard from './view/pages/Dashboard';
 import PdfGenerator from './WIP/PdfGenerator';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoginStatus, setUserRole } from './state/actionCreators/authActionCreators';
+import ExcelUploadComponent from './view/pages/excelUploadComponent';
 
 const App = () => {
 
@@ -68,6 +69,7 @@ const App = () => {
           <Route path="/checkLogin" element={<CheckLogin/>}/> {/*Add this line */}
           <Route path="/dashboard" element={<Dashboard />} /> {/* Add this line */}
           <Route path="/generatePdf" element={<PdfGenerator />} /> {/* Add this line */}
+          <Route path="/parse" element={<ExcelUploadComponent/>}/>
         </Routes>
       </div>
     </Router>

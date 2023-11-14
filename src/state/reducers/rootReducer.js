@@ -8,6 +8,7 @@ import departmentReducer from './subReducers/departmentReducer';
 import selectedTeacherReducer from './subReducers/selectedTeacherReducer';
 import selectedDayReducer from './subReducers/selectedDayOfWeekReducer';
 import authReducer from './subReducers/authReducer';
+import websocketReducer from './subReducers/webSocketReducer';
 
 const rootReducer = combineReducers({
   teachers: teacherReducer,
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   selectedTeacher: selectedTeacherReducer,
   selectedDay: selectedDayReducer,
   auth:authReducer,
+  websocket:websocketReducer,
   // ... add more reducers as needed
 });
 

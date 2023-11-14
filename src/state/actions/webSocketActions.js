@@ -1,0 +1,4 @@
+//webSocketActions.js
+export const CONNECT_SOCKET = 'CONNECT_SOCKET';
+export const DISCONNECT_SOCKET = 'DISCONNECT_SOCKET';
+export const RECEIVE_MESSAGE = 'RECEIVE_MESSAGE';

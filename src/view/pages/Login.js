@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
-import authService from '../../businessLogic/authService';
+import authService from '../../businessLogic/services/authService';
 
 const Login = ({ onLoginSuccess }) => {
   const navigate = useNavigate();

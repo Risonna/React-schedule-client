@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import useDataFetching from '../../domain/hooks/useDataFetching';
 import CabinetSelect from '../selectionMenus/CabinetSelect';
 import DayOfWeekSelect from '../selectionMenus/dayOfWeekSelect';
 import LessonTable from '../tables/LessonTable';
@@ -9,14 +8,36 @@ import { fetchSubjects } from '../../state/actionCreators/subjectActionCreators'
 import { fetchCabinets } from '../../state/actionCreators/cabinetActionCreators';
 import { fetchLessons } from '../../state/actionCreators/lessonActionCreators';
 import { setSelectedDayOfWeek } from '../../state/actionCreators/selectedDayOfWeekActionCreators';
+import {
+  startListening,
+  disconnectSocket,
+  receiveMessage,
+  sendMessage,
+  connectSocket,
+} from '../../state/actionCreators/webSocketActionCreators';
+import { generatePdf, downloadPdf } from '../../businessLogic/services/pdfService';
 
 const CabinetSchedule = () => {
   const [selectedCabinet, setSelectedCabinet] = useState(1);
+  const [taskId, setTaskId] = useState(null);
 
   const daysOfWeek = ['ПОНЕДЕЛЬНИК', 'ВТОРНИК', 'СРЕДА', 'ЧЕТВЕРГ', 'ПЯТНИЦА', 'СУББОТА', 'ВОСКРЕСЕНЬЕ', 'ВСЯ НЕДЕЛЯ'];
   const TIME_PERIODS = ['8.00-9.35', '9.45-11.20', '11.45-13.20', '13.30-15.05', '15.30-17.05', '17.15-18.50', '19.00-20.35'];
 
   const dispatch = useDispatch();
+  
+  const { connected, messages } = useSelector((state) => state.websocket);
+
+  useEffect(() => {
+    // Start listening to socket events when the component mounts
+    dispatch(startListening());
+
+    // Cleanup function
+    return () => {
+      // Disconnect the socket when the component unmounts
+      dispatch(disconnectSocket());
+    };
+  }, [dispatch]);
 
   const selectedDayOfWeek = useSelector((state) => state.selectedDay);
 
@@ -52,6 +73,35 @@ const CabinetSchedule = () => {
     dispatch(fetchLessons('cabinet', selectedCabinet));
   }, [selectedCabinet])
 
+  const handleGeneratePdf = async () => {
+    try {
+      const element = document.getElementById('lessonTable');
+      if (element) {
+        const htmlContent = '<table class="lessonTable" id="lessonTable">' + element.innerHTML + '</table>';
+        console.log('HTML Content:', htmlContent);
+
+        const receivedTaskId = await generatePdf(htmlContent);
+        setTaskId(receivedTaskId);
+        dispatch(sendMessage(receivedTaskId));
+      } else {
+        console.log('No lesson-table');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Handle the WebSocket messages
+  useEffect(() => {
+    if (messages.length > 0) {
+      const receivedMessage = messages[messages.length - 1];
+      console.log('Message from server:', receivedMessage);
+      if (receivedMessage === taskId) {
+        downloadPdf(taskId);
+      }
+    }
+  }, [messages, taskId]);
+
   // Wait for all the data to be loaded before rendering the LessonTable
   if (cabinetsLoading || subjectsLoading || lessonsLoading || teachersLoading) {
     return <div>Loading...</div>;
@@ -59,6 +109,7 @@ const CabinetSchedule = () => {
 
   return (
     <div className="schedule-container">
+      <button onClick={handleGeneratePdf}>Generate PDF</button>
       <h2>Cabinet Schedule</h2>
       <div className="selection-menu-wrapper">
         <CabinetSelect cabinets={cabinets} selectedCabinet={selectedCabinet} handleCabinetChange={handleCabinetChange} />

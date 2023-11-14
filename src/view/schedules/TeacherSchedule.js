@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import useDataFetching from '../../domain/hooks/useDataFetching';
 import TeacherSelect from '../selectionMenus/TeacherSelect'
 import DayOfWeekSelect from '../selectionMenus/dayOfWeekSelect';
 import LessonTable from '../tables/LessonTable';
@@ -11,6 +10,14 @@ import { fetchCabinets } from '../../state/actionCreators/cabinetActionCreators'
 import { fetchLessons } from '../../state/actionCreators/lessonActionCreators';
 import { setSelectedTeacher } from '../../state/actionCreators/selectedTeacherActionCreators';
 import { setSelectedDayOfWeek } from '../../state/actionCreators/selectedDayOfWeekActionCreators';
+import {
+    startListening,
+    disconnectSocket,
+    receiveMessage,
+    sendMessage,
+    connectSocket,
+} from '../../state/actionCreators/webSocketActionCreators';
+import { generatePdf, downloadPdf } from '../../businessLogic/services/pdfService';
 
 
 
@@ -19,13 +26,56 @@ const TeacherSchedule = () => {
     const daysOfWeek = ['ПОНЕДЕЛЬНИК', 'ВТОРНИК', 'СРЕДА', 'ЧЕТВЕРГ', 'ПЯТНИЦА', 'СУББОТА', 'ВОСКРЕСЕНЬЕ', 'ВСЯ НЕДЕЛЯ'];
 
     const TIME_PERIODS = ['8.00-9.35', '9.45-11.20', '11.45-13.20', '13.30-15.05', '15.30-17.05', '17.15-18.50', '19.00-20.35'];
+    const [taskId, setTaskId] = useState(null);
 
 
     const dispatch = useDispatch();
+
+    const { connected, messages } = useSelector((state) => state.websocket);
+
+    useEffect(() => {
+        // Start listening to socket events when the component mounts
+        dispatch(startListening());
+
+        // Cleanup function
+        return () => {
+            // Disconnect the socket when the component unmounts
+            dispatch(disconnectSocket());
+        };
+    }, [dispatch]);
+
+    const handleGeneratePdf = async () => {
+        try {
+            const element = document.getElementById('lessonTable');
+            if (element) {
+                const htmlContent = '<table class="lessonTable" id="lessonTable">' + element.innerHTML + '</table>';
+                console.log('HTML Content:', htmlContent);
+
+                const receivedTaskId = await generatePdf(htmlContent);
+                setTaskId(receivedTaskId);
+                dispatch(sendMessage(receivedTaskId));
+            } else {
+                console.log('No lesson-table');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // Handle the WebSocket messages
+    useEffect(() => {
+        if (messages.length > 0) {
+            const receivedMessage = messages[messages.length - 1];
+            console.log('Message from server:', receivedMessage);
+            if (receivedMessage === taskId) {
+                downloadPdf(taskId);
+            }
+        }
+    }, [messages, taskId]);
     const selectedDayOfWeek = useSelector((state) => state.selectedDay);
 
     const selectedTeacher = useSelector((state) => state.selectedTeacher);
-    
+
     const teachers = useSelector((state) => state.teachers.data);
     const teachersLoading = useSelector((state) => state.teachers.loading);
 
@@ -53,11 +103,11 @@ const TeacherSchedule = () => {
         dispatch(fetchSubjects());
         dispatch(fetchCabinets());
         dispatch(fetchLessons('teacher', selectedTeacher));
-        
+
     }, [dispatch]);
 
     useEffect(() => {
-            dispatch(fetchLessons('teacher', selectedTeacher));
+        dispatch(fetchLessons('teacher', selectedTeacher));
     }, [selectedTeacher])
 
 
@@ -70,13 +120,14 @@ const TeacherSchedule = () => {
 
     return (
         <div className="schedule-container">
+            <button onClick={handleGeneratePdf}>Generate PDF</button>
             <h2>Teacher Schedule</h2>
             <div className="selection-menu-wrapper">
                 <TeacherSelect teachers={teachers} selectedTeacher={selectedTeacher} handleTeacherChange={handleTeacherChange} />
                 <DayOfWeekSelect daysOfWeek={daysOfWeek} selectedDayOfWeek={selectedDayOfWeek} handleDayOfWeekChange={handleDayOfWeekChange} />
             </div>
 
-            <LessonTable selectedDayOfWeek={selectedDayOfWeek} TIME_PERIODS={TIME_PERIODS} lessons={lessons} subjects={subjects} teachers={teachers} cabinets={cabinets}/>
+            <LessonTable selectedDayOfWeek={selectedDayOfWeek} TIME_PERIODS={TIME_PERIODS} lessons={lessons} subjects={subjects} teachers={teachers} cabinets={cabinets} />
         </div>
     );
 };

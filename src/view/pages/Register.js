@@ -3,7 +3,7 @@ import React from 'react';
 import { useState } from 'react';
 
 import './styles/register.css';
-import registerService from '../../businessLogic/registerService';
+import registerService from '../../businessLogic/services/registerService';
 
 const Register = () => {
   const [formData, setFormData] = useState({

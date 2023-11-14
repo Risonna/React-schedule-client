@@ -9,10 +9,10 @@ const Dashboard = () => {
       <div className="dashboard-cards">
         {/* Card 1 */}
         <div className="dashboard-card">
-          <Link to="/teacherschedule" className="dashboard-link">
+          <Link to="/parse" className="dashboard-link">
             <FiBook className="dashboard-icon" />
-            <h3>Teacher Schedule</h3>
-            <p>View and manage teacher schedules</p>
+            <h3>Parse excel</h3>
+            <p>Upload excel file and get your schedule parsed</p>
           </Link>
         </div>
 
@@ -20,8 +20,8 @@ const Dashboard = () => {
         <div className="dashboard-card">
           <Link to="/cabinetschedule" className="dashboard-link">
             <FiCalendar className="dashboard-icon" />
-            <h3>Cabinet Schedule</h3>
-            <p>View and manage cabinet schedules</p>
+            <h3>Update Data</h3>
+            <p>Manually or automatically update data</p>
           </Link>
         </div>
 
@@ -29,8 +29,8 @@ const Dashboard = () => {
         <div className="dashboard-card">
           <Link to="/departmentschedule" className="dashboard-link">
             <FiUsers className="dashboard-icon" />
-            <h3>Department Schedule</h3>
-            <p>View and manage department schedules</p>
+            <h3>Check statistics</h3>
+            <p>See statistics for different things related to your schedule</p>
           </Link>
         </div>
 
@@ -38,8 +38,8 @@ const Dashboard = () => {
         <div className="dashboard-card">
           <Link to="/registerActually" className="dashboard-link">
             <FiFileText className="dashboard-icon" />
-            <h3>Check Register</h3>
-            <p>Check attendance and registration</p>
+            <h3>Give teachers a role</h3>
+            <p>Give selected teachers rights to upload schedule</p>
           </Link>
         </div>
       </div>

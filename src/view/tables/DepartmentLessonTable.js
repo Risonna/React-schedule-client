@@ -116,7 +116,7 @@ const DepartmentLessonTable = ({ selectedDayOfWeek, TIME_PERIODS, lessons, subje
     let firstTableRendered = false;
     const bulb = document.querySelector('.alldaysTeachers');
     return (
-      <div style={{ display: 'flex', flexDirection: 'row', overflow: 'auto' }}>
+      <div id='allTeachersWholeWeek' style={{ display: 'flex', flexDirection: 'row', overflow: 'auto' }}>
         {daysOfWeek.map((dayOfWeek) => {
           if (dayOfWeek !== 'ВСЯ НЕДЕЛЯ') {
             return (
@@ -153,7 +153,7 @@ const DepartmentLessonTable = ({ selectedDayOfWeek, TIME_PERIODS, lessons, subje
           {renderWholeWeekTables()}
         </div>
       ) : (
-        <table className='allDaysTeachers'>
+        <table className='allDaysTeachers' id='allTeachersOneDay'>
           <thead>
             {renderTableHeader(true)}
           </thead>

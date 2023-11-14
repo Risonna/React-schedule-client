@@ -11,16 +11,89 @@ import { fetchCabinets } from '../../state/actionCreators/cabinetActionCreators'
 import { fetchLessons } from '../../state/actionCreators/lessonActionCreators';
 import { fetchDepartments } from '../../state/actionCreators/departmentActionCreators';
 import { setSelectedDayOfWeek } from '../../state/actionCreators/selectedDayOfWeekActionCreators';
+import {
+    startListening,
+    disconnectSocket,
+    receiveMessage,
+    sendMessage,
+    connectSocket,
+} from '../../state/actionCreators/webSocketActionCreators';
+import { generatePdf, downloadPdf } from '../../businessLogic/services/pdfService';
 
 const DepartmentSchedule = () => {
     const [selectedDepartment, setSelectedDepartment] = useState('unknown');
     const [selectedTeacher, setSelectedTeacher] = useState(1);
     const [viewType, setViewType] = useState('singleTeacher');
+    const [taskId, setTaskId] = useState(null);
 
     const daysOfWeek = ['ПОНЕДЕЛЬНИК', 'ВТОРНИК', 'СРЕДА', 'ЧЕТВЕРГ', 'ПЯТНИЦА', 'СУББОТА', 'ВОСКРЕСЕНЬЕ', 'ВСЯ НЕДЕЛЯ'];
     const TIME_PERIODS = ['8.00-9.35', '9.45-11.20', '11.45-13.20', '13.30-15.05', '15.30-17.05', '17.15-18.50', '19.00-20.35'];
 
     const dispatch = useDispatch();
+
+    const { connected, messages } = useSelector((state) => state.websocket);
+
+    useEffect(() => {
+        // Start listening to socket events when the component mounts
+        dispatch(startListening());
+
+        // Cleanup function
+        return () => {
+            // Disconnect the socket when the component unmounts
+            dispatch(disconnectSocket());
+        };
+    }, [dispatch]);
+
+    const handleGeneratePdf = async () => {
+        try {
+            const element = document.getElementById('lessonTable');
+            if (element) {
+                const htmlContent = '<table class="lessonTable" id="lessonTable">' + element.innerHTML + '</table>';
+                console.log('HTML Content:', htmlContent);
+
+                const receivedTaskId = await generatePdf(htmlContent);
+                setTaskId(receivedTaskId);
+                dispatch(sendMessage(receivedTaskId));
+            } else {
+                const elementAllTeachersOneDay = document.getElementById('allTeachersOneDay');
+                if (elementAllTeachersOneDay) {
+                    const htmlContent = '<table class="lessonTable" id="lessonTable">' + elementAllTeachersOneDay.innerHTML + '</table>';
+                    console.log('HTML Content:', htmlContent);
+
+                    const receivedTaskId = await generatePdf(htmlContent);
+                    setTaskId(receivedTaskId);
+                    dispatch(sendMessage(receivedTaskId));
+                }
+                else {
+                    const elementAllTeachersWholeWeek = document.getElementById('allTeachersWholeWeek');
+                    if (elementAllTeachersWholeWeek) {
+                        const htmlContent = '<table class="lessonTable" id="lessonTable">' + elementAllTeachersWholeWeek.innerHTML + '</table>';
+                        console.log('HTML Content:', htmlContent);
+
+                        const receivedTaskId = await generatePdf(htmlContent);
+                        setTaskId(receivedTaskId);
+                        dispatch(sendMessage(receivedTaskId));
+                    }
+                    else {
+                        console.log('No table found by id');
+                    }
+                }
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // Handle the WebSocket messages
+    useEffect(() => {
+        if (messages.length > 0) {
+            const receivedMessage = messages[messages.length - 1];
+            console.log('Message from server:', receivedMessage);
+            if (receivedMessage === taskId) {
+                downloadPdf(taskId);
+            }
+        }
+    }, [messages, taskId]);
 
     const selectedDayOfWeek = useSelector((state) => state.selectedDay);
 
@@ -80,12 +153,12 @@ const DepartmentSchedule = () => {
     }, [teachers]);
 
     useEffect(() => {
-    if(viewType == 'singleTeacher'){
-        dispatch(fetchLessons('teacher', selectedTeacher));
-    }
-    else{
-        dispatch(fetchLessons('none', null));
-    }
+        if (viewType == 'singleTeacher') {
+            dispatch(fetchLessons('teacher', selectedTeacher));
+        }
+        else {
+            dispatch(fetchLessons('none', null));
+        }
 
     }, [viewType])
 
@@ -105,6 +178,7 @@ const DepartmentSchedule = () => {
 
     return (
         <div className="schedule-container">
+            <button onClick={handleGeneratePdf}>Generate PDF</button>
             <h2 style={{ textAlignLast: 'center' }}>Department Schedule</h2>
             <div className="selection-menu-wrapper">
                 <DepartmentSelect departments={departments} selectedDepartment={selectedDepartment} handleDepartmentChange={handleDepartmentChange} />
