@@ -1,4 +1,4 @@
-import { CONNECT_SOCKET, DISCONNECT_SOCKET, RECEIVE_MESSAGE } from '../actions/webSocketActions';
+import { CONNECT_SOCKET, DISCONNECT_SOCKET, RECEIVE_MESSAGE } from '../../actions/webSockets/webSocketActions';
 
 // Create the socket instance
 const socket = new WebSocket('ws://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/websocket/pdf');

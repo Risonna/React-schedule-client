@@ -1,4 +1,4 @@
-// reducers/teacherReducer.js
+// reducers/lessonReducer.js
 const initialState = {
     data: [],
     loading: false,

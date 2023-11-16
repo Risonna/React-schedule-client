@@ -1,5 +1,5 @@
 // actionCreators/subjectActionCreators.js
-import { fetchDepartmentsRequest, fetchDepartmentsSuccess, fetchDepartmentsFailure } from '../actions/departmentActions';
+import { fetchDepartmentsRequest, fetchDepartmentsSuccess, fetchDepartmentsFailure } from '../../actions/entities/departmentActions';
 
 export const fetchDepartments = () => {
   return async (dispatch) => {

@@ -16,6 +16,15 @@ import PdfGenerator from './WIP/PdfGenerator';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoginStatus, setUserRole } from './state/actionCreators/authActionCreators';
 import ExcelUploadComponent from './view/pages/excelUploadComponent';
+import UpdateComponent from './view/pages/updateData';
+import UserTableComponent from './view/pages/UserTableComponent';
+import {
+  startListening,
+  disconnectSocket,
+  receiveMessage,
+  sendMessage,
+  connectSocket,
+} from './state/actionCreators/webSockets/entitySocketActionCreators';
 
 const App = () => {
 
@@ -49,6 +58,19 @@ const App = () => {
     dispatch(setLoginStatus(false));
   };
 
+  useEffect(() => {
+    // Start listening to socket events when the component mounts
+    dispatch(startListening());
+
+    // Cleanup function
+    return () => {
+        // Disconnect the socket when the component unmounts
+        dispatch(disconnectSocket());
+    };
+}, [dispatch]);
+
+
+
    // Show loading state if logged-in state is still null
    if (loggedIn === null) {
     return <div>Loading...</div>;
@@ -62,14 +84,16 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/teacherschedule" element={<TeacherSchedule />} /> {/* Add this line */}
-          <Route path="/cabinetschedule" element={<CabinetSchedule />} /> {/* Add this line */}
-          <Route path="departmentschedule" element={<DepartmentSchedule/>}/> {/* Add this line*/}
-          <Route path="/registerActually" element={<CheckRegister/>}/> {/*Add this line */}
-          <Route path="/checkLogin" element={<CheckLogin/>}/> {/*Add this line */}
-          <Route path="/dashboard" element={<Dashboard />} /> {/* Add this line */}
-          <Route path="/generatePdf" element={<PdfGenerator />} /> {/* Add this line */}
+          <Route path="/teacherschedule" element={<TeacherSchedule />} />
+          <Route path="/cabinetschedule" element={<CabinetSchedule />} /> 
+          <Route path="departmentschedule" element={<DepartmentSchedule/>}/> 
+          <Route path="/registerActually" element={<CheckRegister/>}/> 
+          <Route path="/checkLogin" element={<CheckLogin/>}/> 
+          <Route path="/dashboard" element={<Dashboard />} /> 
+          <Route path="/generatePdf" element={<PdfGenerator />} /> 
           <Route path="/parse" element={<ExcelUploadComponent/>}/>
+          <Route path="/updateData" element={<UpdateComponent/>}/>
+          <Route path="/teacherAdminTable" element={<UserTableComponent/>}/>
         </Routes>
       </div>
     </Router>

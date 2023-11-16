@@ -4,10 +4,10 @@ import DayOfWeekSelect from '../selectionMenus/dayOfWeekSelect';
 import LessonTable from '../tables/LessonTable';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchTeachers } from '../../state/actionCreators/teacherActionCreators';
-import { fetchSubjects } from '../../state/actionCreators/subjectActionCreators';
-import { fetchCabinets } from '../../state/actionCreators/cabinetActionCreators';
-import { fetchLessons } from '../../state/actionCreators/lessonActionCreators';
+import { fetchTeachers } from '../../state/actionCreators/entities/teacherActionCreators';
+import { fetchSubjects } from '../../state/actionCreators/entities/subjectActionCreators';
+import { fetchCabinets } from '../../state/actionCreators/entities/cabinetActionCreators';
+import { fetchLessons } from '../../state/actionCreators/entities/lessonActionCreators';
 import { setSelectedTeacher } from '../../state/actionCreators/selectedTeacherActionCreators';
 import { setSelectedDayOfWeek } from '../../state/actionCreators/selectedDayOfWeekActionCreators';
 import {
@@ -16,7 +16,7 @@ import {
     receiveMessage,
     sendMessage,
     connectSocket,
-} from '../../state/actionCreators/webSocketActionCreators';
+} from '../../state/actionCreators/webSockets/webSocketActionCreators';
 import { generatePdf, downloadPdf } from '../../businessLogic/services/pdfService';
 
 
@@ -69,6 +69,18 @@ const TeacherSchedule = () => {
             console.log('Message from server:', receivedMessage);
             if (receivedMessage === taskId) {
                 downloadPdf(taskId);
+            }
+            if(receivedMessage === 'refetchLessons'){
+                dispatch(fetchLessons('teacher', selectedTeacher));
+            }
+            else if(receivedMessage === 'refetchTeachers'){
+                dispatch(fetchTeachers('none'));
+            }
+            else if(receivedMessage === 'refetchCabinets'){
+                dispatch(fetchCabinets());
+            }
+            else if(receivedMessage === 'refetchSubjects'){
+                dispatch(fetchSubjects());
             }
         }
     }, [messages, taskId]);

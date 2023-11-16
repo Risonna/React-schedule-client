@@ -1,6 +1,6 @@
 // state/reducers/websocketReducer.js
 
-import { CONNECT_SOCKET, DISCONNECT_SOCKET, RECEIVE_MESSAGE } from '../../actions/webSocketActions';
+import { CONNECT_SOCKET, DISCONNECT_SOCKET, RECEIVE_MESSAGE } from '../../actions/webSockets/webSocketActions';
 
 const initialState = {
   connected: false,

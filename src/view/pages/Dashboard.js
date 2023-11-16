@@ -18,7 +18,7 @@ const Dashboard = () => {
 
         {/* Card 2 */}
         <div className="dashboard-card">
-          <Link to="/cabinetschedule" className="dashboard-link">
+          <Link to="/updateData" className="dashboard-link">
             <FiCalendar className="dashboard-icon" />
             <h3>Update Data</h3>
             <p>Manually or automatically update data</p>
@@ -36,7 +36,7 @@ const Dashboard = () => {
 
         {/* Card 4 */}
         <div className="dashboard-card">
-          <Link to="/registerActually" className="dashboard-link">
+          <Link to="/teacherAdminTable" className="dashboard-link">
             <FiFileText className="dashboard-icon" />
             <h3>Give teachers a role</h3>
             <p>Give selected teachers rights to upload schedule</p>

@@ -9,7 +9,7 @@ import {
   receiveMessage,
   sendMessage,
   connectSocket,
-} from '../state/actionCreators/webSocketActionCreators';
+} from '../state/actionCreators/webSockets/webSocketActionCreators';
 import { generatePdf, downloadPdf } from '../businessLogic/services/pdfService';
 
 function PdfGenerator() {

@@ -1,5 +1,5 @@
 // actionCreators/subjectActionCreators.js
-import { fetchCabinetsRequest, fetchCabinetsSuccess, fetchCabinetsFailure } from '../actions/cabinetActions';
+import { fetchCabinetsRequest, fetchCabinetsSuccess, fetchCabinetsFailure } from '../../actions/entities/cabinetActions';
 
 export const fetchCabinets = () => {
   return async (dispatch) => {

@@ -1,5 +1,5 @@
-// actionCreators/subjectActionCreators.js
-import { fetchLessonsRequest, fetchLessonsSuccess, fetchLessonsFailure } from '../actions/lessonActions';
+// actionCreators/lessonActionCreators.js
+import { fetchLessonsRequest, fetchLessonsSuccess, fetchLessonsFailure } from '../../actions/entities/lessonActions';
 
 export const fetchLessons = (entity, selectedEntity) => {
   return async (dispatch) => {
