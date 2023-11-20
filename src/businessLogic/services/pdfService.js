@@ -1,8 +1,8 @@
 // pdfService.js
 
-export const generatePdf = async (htmlContent) => {
+export const generatePdf = async (htmlContent, taskId) => {
     try {
-      const response = await fetch('http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/pdf', {
+      const response = await fetch(`http://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/api/pdf?taskId=${taskId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'text/html',
@@ -11,6 +11,7 @@ export const generatePdf = async (htmlContent) => {
       });
   
       if (response.ok) {
+        console.log('task id in api/pd is ' + taskId);
         return await response.text();
       } else {
         const errorText = await response.text();

@@ -19,12 +19,13 @@ import {
     connectSocket,
 } from '../../state/actionCreators/webSockets/webSocketActionCreators';
 import { generatePdf, downloadPdf } from '../../businessLogic/services/pdfService';
+import { generateUUID } from '../../businessLogic/uuid';
 
 const DepartmentSchedule = () => {
     const [selectedDepartment, setSelectedDepartment] = useState('unknown');
     const [selectedTeacher, setSelectedTeacher] = useState(1);
     const [viewType, setViewType] = useState('singleTeacher');
-    const [taskId, setTaskId] = useState(null);
+    const [taskId, setTaskId] = useState(generateUUID());
 
     const daysOfWeek = ['ПОНЕДЕЛЬНИК', 'ВТОРНИК', 'СРЕДА', 'ЧЕТВЕРГ', 'ПЯТНИЦА', 'СУББОТА', 'ВОСКРЕСЕНЬЕ', 'ВСЯ НЕДЕЛЯ'];
     const TIME_PERIODS = ['8.00-9.35', '9.45-11.20', '11.45-13.20', '13.30-15.05', '15.30-17.05', '17.15-18.50', '19.00-20.35'];
@@ -34,35 +35,35 @@ const DepartmentSchedule = () => {
     const { connected, messages } = useSelector((state) => state.websocket);
 
     useEffect(() => {
-        // Start listening to socket events when the component mounts
-        dispatch(startListening());
 
         // Cleanup function
         return () => {
             // Disconnect the socket when the component unmounts
-            dispatch(disconnectSocket());
+            if(connected){
+                dispatch(disconnectSocket());
+                }
+            setTaskId(null);
         };
     }, [dispatch]);
 
     const handleGeneratePdf = async () => {
         try {
+            dispatch(connectSocket(taskId));
+            // Start listening to socket events when the component mounts
+            dispatch(startListening());
             const element = document.getElementById('lessonTable');
             if (element) {
                 const htmlContent = '<table class="lessonTable" id="lessonTable">' + element.innerHTML + '</table>';
                 console.log('HTML Content:', htmlContent);
 
-                const receivedTaskId = await generatePdf(htmlContent);
-                setTaskId(receivedTaskId);
-                dispatch(sendMessage(receivedTaskId));
+                await generatePdf(htmlContent, taskId);
             } else {
                 const elementAllTeachersOneDay = document.getElementById('allTeachersOneDay');
                 if (elementAllTeachersOneDay) {
                     const htmlContent = '<table class="lessonTable" id="lessonTable">' + elementAllTeachersOneDay.innerHTML + '</table>';
                     console.log('HTML Content:', htmlContent);
 
-                    const receivedTaskId = await generatePdf(htmlContent);
-                    setTaskId(receivedTaskId);
-                    dispatch(sendMessage(receivedTaskId));
+                    await generatePdf(htmlContent, taskId);
                 }
                 else {
                     const elementAllTeachersWholeWeek = document.getElementById('allTeachersWholeWeek');
@@ -70,9 +71,7 @@ const DepartmentSchedule = () => {
                         const htmlContent = '<table class="lessonTable" id="lessonTable">' + elementAllTeachersWholeWeek.innerHTML + '</table>';
                         console.log('HTML Content:', htmlContent);
 
-                        const receivedTaskId = await generatePdf(htmlContent);
-                        setTaskId(receivedTaskId);
-                        dispatch(sendMessage(receivedTaskId));
+                        await generatePdf(htmlContent, taskId);
                     }
                     else {
                         console.log('No table found by id');
@@ -121,6 +120,7 @@ const DepartmentSchedule = () => {
         setSelectedTeacher(null);
         // Reset the view type to single teacher when the department changes
         setViewType('singleTeacher');
+        setTaskId(generateUUID());
     };
 
     const handleTeacherChange = (event) => {
@@ -129,9 +129,11 @@ const DepartmentSchedule = () => {
 
     const handleDayOfWeekChange = (event) => {
         dispatch(setSelectedDayOfWeek(event.target.value));
+        setTaskId(generateUUID());
     };
     const handleViewTypeChange = (event) => {
         setViewType(event.target.value);
+        setTaskId(generateUUID());
     };
 
     useEffect(() => {

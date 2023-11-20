@@ -1,19 +1,14 @@
+//webSocketActionCreators.js
 import { CONNECT_SOCKET, DISCONNECT_SOCKET, RECEIVE_MESSAGE } from '../../actions/webSockets/webSocketActions';
 
 // Create the socket instance
-const socket = new WebSocket('ws://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/websocket/pdf');
+var socket;
 
-export const connectSocket = () => (dispatch) => {
+export const connectSocket = (taskId) => (dispatch) => {
   // Dispatch the action
   dispatch({ type: CONNECT_SOCKET });
-
-  // Add event listeners
-  socket.addEventListener('open', () => {
-    console.log('Connected Socket');
-    // Dispatch the action when connected
-    dispatch(connectSocket());
-  });
-
+  socket = new WebSocket(`ws://localhost:8080/ScheduleWebApp-1.0-SNAPSHOT/websocket/pdf/${taskId}`);
+  console.log('Opened connection ' + taskId);
 };
 
 export const disconnectSocket = () => (dispatch) => {
@@ -27,6 +22,7 @@ export const disconnectSocket = () => (dispatch) => {
     dispatch(disconnectSocket());
   });
 
+  console.log('Closed connection');
   // Disconnect the socket
   socket.close();
 

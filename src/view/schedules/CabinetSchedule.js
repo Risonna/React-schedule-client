@@ -16,10 +16,11 @@ import {
   connectSocket,
 } from '../../state/actionCreators/webSockets/webSocketActionCreators';
 import { generatePdf, downloadPdf } from '../../businessLogic/services/pdfService';
+import { generateUUID } from '../../businessLogic/uuid';
 
 const CabinetSchedule = () => {
   const [selectedCabinet, setSelectedCabinet] = useState(1);
-  const [taskId, setTaskId] = useState(null);
+  const [taskId, setTaskId] = useState(generateUUID());
 
   const daysOfWeek = ['ПОНЕДЕЛЬНИК', 'ВТОРНИК', 'СРЕДА', 'ЧЕТВЕРГ', 'ПЯТНИЦА', 'СУББОТА', 'ВОСКРЕСЕНЬЕ', 'ВСЯ НЕДЕЛЯ'];
   const TIME_PERIODS = ['8.00-9.35', '9.45-11.20', '11.45-13.20', '13.30-15.05', '15.30-17.05', '17.15-18.50', '19.00-20.35'];
@@ -29,14 +30,15 @@ const CabinetSchedule = () => {
   const { connected, messages } = useSelector((state) => state.websocket);
 
   useEffect(() => {
-    // Start listening to socket events when the component mounts
-    dispatch(startListening());
 
-    // Cleanup function
-    return () => {
-      // Disconnect the socket when the component unmounts
-      dispatch(disconnectSocket());
-    };
+        // Cleanup function
+        return () => {
+          // Disconnect the socket when the component unmounts
+          if(connected){
+            dispatch(disconnectSocket());
+            }
+          setTaskId(null);
+      };
   }, [dispatch]);
 
   const selectedDayOfWeek = useSelector((state) => state.selectedDay);
@@ -55,10 +57,12 @@ const CabinetSchedule = () => {
 
   const handleCabinetChange = (event) => {
     setSelectedCabinet(event.target.value);
+    setTaskId(generateUUID());
   };
 
   const handleDayOfWeekChange = (event) => {
     dispatch(setSelectedDayOfWeek(event.target.value));
+    setTaskId(generateUUID());
   };
 
   useEffect(() => {
@@ -75,14 +79,15 @@ const CabinetSchedule = () => {
 
   const handleGeneratePdf = async () => {
     try {
+      dispatch(connectSocket(taskId));
+      // Start listening to socket events when the component mounts
+      dispatch(startListening());
       const element = document.getElementById('lessonTable');
       if (element) {
         const htmlContent = '<table class="lessonTable" id="lessonTable">' + element.innerHTML + '</table>';
         console.log('HTML Content:', htmlContent);
 
-        const receivedTaskId = await generatePdf(htmlContent);
-        setTaskId(receivedTaskId);
-        dispatch(sendMessage(receivedTaskId));
+        await generatePdf(htmlContent, taskId);
       } else {
         console.log('No lesson-table');
       }

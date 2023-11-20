@@ -18,6 +18,7 @@ import {
     connectSocket,
 } from '../../state/actionCreators/webSockets/webSocketActionCreators';
 import { generatePdf, downloadPdf } from '../../businessLogic/services/pdfService';
+import { generateUUID } from '../../businessLogic/uuid';
 
 
 
@@ -26,34 +27,37 @@ const TeacherSchedule = () => {
     const daysOfWeek = ['ПОНЕДЕЛЬНИК', 'ВТОРНИК', 'СРЕДА', 'ЧЕТВЕРГ', 'ПЯТНИЦА', 'СУББОТА', 'ВОСКРЕСЕНЬЕ', 'ВСЯ НЕДЕЛЯ'];
 
     const TIME_PERIODS = ['8.00-9.35', '9.45-11.20', '11.45-13.20', '13.30-15.05', '15.30-17.05', '17.15-18.50', '19.00-20.35'];
-    const [taskId, setTaskId] = useState(null);
+    const [taskId, setTaskId] = useState(generateUUID());
 
 
     const dispatch = useDispatch();
 
-    const { connected, messages } = useSelector((state) => state.websocket);
+    const {connected, messages } = useSelector((state) => state.websocket);
 
     useEffect(() => {
-        // Start listening to socket events when the component mounts
-        dispatch(startListening());
 
         // Cleanup function
         return () => {
             // Disconnect the socket when the component unmounts
+            if(connected){
             dispatch(disconnectSocket());
+            }
+            setTaskId(null);
         };
     }, [dispatch]);
 
     const handleGeneratePdf = async () => {
         try {
+            dispatch(connectSocket(taskId));
+            // Start listening to socket events when the component mounts
+            dispatch(startListening());
+            
             const element = document.getElementById('lessonTable');
             if (element) {
                 const htmlContent = '<table class="lessonTable" id="lessonTable">' + element.innerHTML + '</table>';
                 console.log('HTML Content:', htmlContent);
 
-                const receivedTaskId = await generatePdf(htmlContent);
-                setTaskId(receivedTaskId);
-                dispatch(sendMessage(receivedTaskId));
+                await generatePdf(htmlContent, taskId);
             } else {
                 console.log('No lesson-table');
             }
@@ -84,6 +88,7 @@ const TeacherSchedule = () => {
             }
         }
     }, [messages, taskId]);
+
     const selectedDayOfWeek = useSelector((state) => state.selectedDay);
 
     const selectedTeacher = useSelector((state) => state.selectedTeacher);
@@ -107,6 +112,7 @@ const TeacherSchedule = () => {
     // Define handleDayOfWeekChange function (not shown in your provided code)
     const handleDayOfWeekChange = (event) => {
         dispatch(setSelectedDayOfWeek(event.target.value));
+        setTaskId(generateUUID());
     };
 
 
@@ -120,6 +126,7 @@ const TeacherSchedule = () => {
 
     useEffect(() => {
         dispatch(fetchLessons('teacher', selectedTeacher));
+        setTaskId(generateUUID());
     }, [selectedTeacher])
 
 
