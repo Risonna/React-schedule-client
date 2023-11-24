@@ -13,9 +13,11 @@ import {
   sendMessage,
   connectSocket,
 } from '../../state/actionCreators/webSockets/entitySocketActionCreators';
+import adminTeacherService from '../../businessLogic/services/adminTeacherService';
 
 const UserTableComponent = () => {
   const [username, setUsername] = useState('');
+  
   const dispatch = useDispatch();
   const adminsTeachers = useSelector((state) => state.adminsTeachers.data);
   const { messages } = useSelector((state) => state.websocket);
@@ -34,46 +36,17 @@ const UserTableComponent = () => {
 
   const handleAddUser = async () => {
     if (username.trim() !== '') {
-      // TODO: Call your API to add the user
-      // Example API call using fetch:
-      // const response = await fetch('/your-api-endpoint', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({ username }),
-      // });
-      // If your API returns updated adminsTeachers, you can dispatch a new fetch
-      // dispatch(fetchAdminsTeachers());
+      await adminTeacherService.addTeacher(username);
       setUsername('');
     }
   };
 
   const handleDeleteUser = async (index) => {
-    // TODO: Call your API to delete the user
-    // Example API call using fetch:
-    // const response = await fetch('/your-api-endpoint/' + adminsTeachers[index], {
-    //   method: 'DELETE',
-    // });
-    // If your API returns updated adminsTeachers, you can dispatch a new fetch
-    // dispatch(fetchAdminsTeachers());
+    if (index >= 0 && index < adminsTeachers.length) {
+      await adminTeacherService.deleteTeacher(adminsTeachers[index]);
+    }
+    console.log(index);
   };
-
-  useEffect(() => {
-    // Connect the WebSocket when the component mounts
-    dispatch(connectSocket());
-
-    // Start listening for messages
-    dispatch(startListening());
-
-    // Fetch data when the component mounts
-    dispatch(fetchAdminsTeachers());
-
-    return () => {
-      // Disconnect the WebSocket when the component unmounts
-      dispatch(disconnectSocket());
-    };
-  }, [dispatch]);
 
   return (
     <div className="user-table-container">
